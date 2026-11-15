@@ -48,6 +48,13 @@ pub struct Options {
     /// unknown keys (for example, Serde's `deny_unknown_fields`) so these are not silently
     /// ignored. Defaults to false.
     pub bom_inside_document_as_content: bool,
+    /// Give an auto-detected block scalar at least one column of indentation, as libyaml does.
+    ///
+    /// By default a top-level block scalar (`|` or `>` with no indentation indicator) may hold
+    /// content at column 0. When `true`, its content must be indented by at least one space, so
+    /// a column-0 line ends the scalar and is scanned as the next token (for example `>\n@`
+    /// then reports [`crate::ErrorKind::UnexpectedCharacter`]). Defaults to false.
+    pub block_scalar_indent_at_least_one: bool,
     /// Emit unresolved alias nodes instead of stopping at an unknown anchor.
     ///
     /// Defaults to `false`. When omitted or explicitly set to `false`, an alias without a
@@ -167,6 +174,7 @@ impl Default for Options {
             strict_indentation: false,
             disallow_directives: false,
             bom_inside_document_as_content: false,
+            block_scalar_indent_at_least_one: false,
             emit_unresolved_aliases: false,
             emit_anchor_events: false,
             emit_comments: cfg!(feature = "comments"),
